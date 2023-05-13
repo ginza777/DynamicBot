@@ -3,7 +3,7 @@ from telegram.ext import CommandHandler, CallbackContext, ConversationHandler, M
 from telegram import Update, ReplyKeyboardMarkup
 from apps.bots_config.functions import User_create_or_update, Statistic
 
-button = ReplyKeyboardMarkup([["GetMyID"]], resize_keyboard=True)
+
 
 
 def start(update: Update, context: CallbackContext):
@@ -17,7 +17,8 @@ def start(update: Update, context: CallbackContext):
 
 def users_count(update: Update, context: CallbackContext):
     msg = Statistic(Profile)
-    update.message.reply_text(msg, reply_markup=button)
+    update.message.reply_text('salom')
+    update.message.reply_text(msg)
     return 'bot'
 
 
@@ -118,18 +119,25 @@ def delete_group_join_messages(update, context):
 
         context.bot.delete_message(chat_id=update.message.chat_id, message_id=update.message.message_id)
 
+    return 'bot'
+
 
 conv_handler = ConversationHandler(
-    entry_points=[CommandHandler('start', start),
-                  ],
+    entry_points=[
+        CommandHandler('start', start),
+        MessageHandler(Filters.all, start)
+    ],
     states={
         'bot': [
-            MessageHandler(Filters.all, start),
             MessageHandler(Filters.regex('^(' + 'sherzamon_usercount' + ')$'), users_count),
+            MessageHandler(Filters.all, start),
+            MessageHandler(Filters.status_update, delete_group_join_messages),
+
         ],
     },
     fallbacks=[
-        CommandHandler('start', start)
+        CommandHandler('start', start),
+        MessageHandler(Filters.status_update, delete_group_join_messages),
     ]
 
 )
