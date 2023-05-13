@@ -16,6 +16,6 @@ class Profile(models.Model):
         return 'self.user_id'
 
     class Meta:
-        verbose_name = "Userlist"
-        verbose_name_plural = "Userlist"
+        verbose_name = "Userlist_common"
+        verbose_name_plural = "Userlist_common"
         db_table = "common_profile"

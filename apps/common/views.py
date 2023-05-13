@@ -8,6 +8,9 @@ button = ReplyKeyboardMarkup([["GetMyID"]], resize_keyboard=True)
 def start(update: Update, context: CallbackContext):
     user= update.effective_user
     User_create_or_update(user, Profile)
+    update.message.reply_text(f"""
+
+    🖐️Hello {user.username}""")
     return 'bot'
 def users_count(update: Update, context: CallbackContext):
     msg=Statistic(Profile)

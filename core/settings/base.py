@@ -49,6 +49,8 @@ CUSTOM_APPS = [
     "apps.common",
     "apps.getmyid",
     "apps.bots_config",
+    "apps.tozalovchi",
+
 ]
 
 THIRD_PARTY_APPS = [

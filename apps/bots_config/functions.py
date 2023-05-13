@@ -9,7 +9,6 @@ def User_create_or_update(user, Profile):
         profile.save()
 
     except:
-        print('exept')
         new_user = Profile.objects.create(
             user_id=user.id,
             fistname=user.first_name,
