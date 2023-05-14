@@ -1,0 +1,18 @@
+api_hash = TelegramApi.objects.get(name='tozalovchi').api_hash
+api_id = TelegramApi.objects.get(name='tozalovchi').api_id
+group_id = TelegramApi.objects.get(name='tozalovchi').group
+# Create a new TelegramClient with your API credentials
+client = TelegramClient('my_session', api_id, api_hash)
+
+# Start the client
+client.start()
+
+# Find the group by name
+group = client.get_entity(group_id)
+
+# Get all the members of the group
+members = client.get_participants(group)
+
+# Print the name and username of each member
+for member in members:
+    print(member.first_name, member.last_name, member.username)

@@ -1,3 +1,5 @@
+
+
 def User_create_or_update(user, Profile):
     try:
         profile = Profile.objects.get(user_id=user.id)
@@ -19,12 +21,5 @@ def User_create_or_update(user, Profile):
         )
         new_user.save()
 
-def Statistic(Model):
-    count_active = Model.objects.filter(is_active=True).count()
-    count_block = Model.objects.filter(is_active=False).count()
-    count_all = Model.objects.all().count()
-    msg = (f"umumiy hisob : {count_all}\n"
-           f"faol foydalanuvchilar soni : {count_active}\n"
-           f"nofaol foydalanuvchilar soni : {count_block}\n")
-    return msg
+
 

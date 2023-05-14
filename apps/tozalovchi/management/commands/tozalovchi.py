@@ -5,7 +5,7 @@ from apps.tozalovchi.views import *
 from apps.bots_config.models import Bot_Token
 
 TOKEN = Bot_Token.objects.get(name='tozalovchi').token
-
+bot = Bot(token=TOKEN)
 
 class Command(BaseCommand):
     help = 'Says hello to the user'

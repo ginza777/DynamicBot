@@ -51,6 +51,7 @@ CUSTOM_APPS = [
     "apps.bots_config",
     "apps.tozalovchi",
 
+
 ]
 
 THIRD_PARTY_APPS = [

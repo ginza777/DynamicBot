@@ -1,17 +1,17 @@
+from apps.bots_config.models import TelegramApi
 from apps.tozalovchi.models import Profile
-from telegram.ext import CommandHandler, CallbackContext, ConversationHandler, MessageHandler, Filters
-from telegram import Update, ReplyKeyboardMarkup
+from telegram.ext import CommandHandler, CallbackContext, ConversationHandler
+from telegram import Update
 from apps.bots_config.functions import User_create_or_update, Statistic
-
-
+from telegram.ext import Updater, MessageHandler, Filters
 
 
 def start(update: Update, context: CallbackContext):
     user = update.effective_user
     User_create_or_update(user, Profile)
     update.message.reply_text(f"""
-    
     🖐️Hello {user.username}""")
+
     return 'bot'
 
 
@@ -25,6 +25,7 @@ def users_count(update: Update, context: CallbackContext):
 def delete_group_join_messages(update, context):
     # Xabar turi "new_chat_members" bo'lsa
     if update.message.new_chat_members:
+
         context.bot.delete_message(chat_id=update.message.chat_id, message_id=update.message.message_id)
     # Xabar turi "left_chat_member" bo'lsa
     elif update.message.left_chat_member:

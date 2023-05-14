@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 from telegram import Bot
 from telegram.ext import Updater
-from apps.getmyid.views import conv_handler
+from apps.getmyid.views import *
 from apps.bots_config.models import Bot_Token
 TOKEN=Bot_Token.objects.get(name='getmyid').token
 class Command(BaseCommand):
