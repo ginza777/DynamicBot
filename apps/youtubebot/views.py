@@ -1,12 +1,17 @@
-from apps.getmyid.models import Profile
-from telegram import ParseMode, Update, ReplyKeyboardMarkup
-from apps.bots_config.functions import User_create_or_update
-######adminpanel
-from apps.bots_config.models import Admin_bots
-from telegram.ext import CommandHandler, ConversationHandler, MessageHandler, Filters, CallbackContext
-# ##########################buttons---------------------------
+import os
 
-admin_buttons = ReplyKeyboardMarkup([["user_counts", "user_data"], ['bot_admins','user_finder'],['/admin']],
+import tqdm as tqdm
+
+from apps.youtubebot.models import Profile
+from telegram.ext import CommandHandler, CallbackContext, ConversationHandler, MessageHandler, Filters
+from telegram import Update, ReplyKeyboardMarkup, ParseMode, ReplyKeyboardRemove
+from apps.bots_config.functions import User_create_or_update
+from apps.bots_config.models import Admin_bots
+from pytube import YouTube
+
+
+# adminpanel
+admin_buttons = ReplyKeyboardMarkup([["user_counts", "user_data"], ['bot_admins', 'user_finder'], ['/admin']],
                                     resize_keyboard=True)
 
 
@@ -24,6 +29,7 @@ def users_count(update: Update, context: CallbackContext):
     msg = Statistic(Profile)
     update.message.reply_text(msg, reply_markup=admin_buttons)
     return 'adminpanel'
+
 
 def user_data(update, context):
     msg = ''
@@ -54,7 +60,7 @@ def finder_user(update: Update, context: CallbackContext):
             return 'adminpanel'
         except:
             try:
-                user=Profile.objects.get(user_id=msg)
+                user = Profile.objects.get(user_id=msg)
                 msg = f"""{user.user_id} - {user.username} - {user.fistname} - {user.lastname}"""
                 update.message.reply_text(msg, reply_markup=admin_buttons)
                 return 'adminpanel'
@@ -64,11 +70,10 @@ def finder_user(update: Update, context: CallbackContext):
                 return 'adminpanel'
 
 
-
 def bot_admins(update: Update, context: CallbackContext):
     msg = ''
     num = 1
-    for i in Admin_bots.objects.filter(bot__name='getmyid').all():
+    for i in Admin_bots.objects.filter(bot__name='youtubebot').all():
         bots = ''
         for j in i.bot.all():
             bots += f""" --{j.name}"""
@@ -78,11 +83,7 @@ def bot_admins(update: Update, context: CallbackContext):
     return 'adminpanel'
 
 
-
-
-
 list_admin = [
-
 
     MessageHandler(Filters.regex('^(' + 'user_counts' + ')$'), users_count),
     MessageHandler(Filters.regex('^(' + 'user_data' + ')$'), user_data),
@@ -90,68 +91,69 @@ list_admin = [
     MessageHandler(Filters.regex('^(' + 'bot_admins' + ')$'), bot_admins),
     MessageHandler(Filters.regex(r'@[\w]+.*'), finder_user),
 
-
-
 ]
 
 
-#######################
+######################
 
 
-button = ReplyKeyboardMarkup([["GetMyID"]], resize_keyboard=True)
-
-
-def start(update, context):
+####################
+def start(update: Update, context: CallbackContext):
     user = update.effective_user
     User_create_or_update(user, Profile)
-
     id = update.effective_user.id
-    if Admin_bots.objects.filter(bot__name='getmyid').filter(telegram_id=id).exists():
+    if Admin_bots.objects.filter(bot__name='youtubebot').filter(telegram_id=id).exists():
         update.message.reply_text(f"""Hello Admin""")
-        update.message.reply_text(f""" 
-        🖐️Hello {user.username} 
-        ✅ Your id :  {user.id}
-        ✅ Current message id :  {update.message.message_id}
-        ✅ Update id : {update.update_id}
-        ✅ Chat id  : {update.message.chat_id}
-        ✅ From user id :  {update.message.from_user.id}
-        ✅ https://t.me/{user.username}"
-            """, reply_markup=admin_buttons, parse_mode=ParseMode.HTML)
-
+        update.message.reply_text(f""" ️Hello {user.username}\n✅ Your id :  {user.id}""", reply_markup=admin_buttons,
+                                  parse_mode=ParseMode.HTML)
         return 'adminpanel'
     else:
-        update.message.reply_text(f""" 
-    🖐️Hello {user.username} 
-    ✅ Your id :  {user.id}
-    ✅ Current message id :  {update.message.message_id}
-    ✅ Update id : {update.update_id}
-    ✅ Chat id  : {update.message.chat_id}
-    ✅ From user id :  {update.message.from_user.id}
-    ✅ https://t.me/{user.username}"
-        """, reply_markup=button, parse_mode=ParseMode.HTML)
-
+        update.message.reply_text(
+            f""" 🖐️Hello {user.username}\n✅ Your id :  {user.id}\nyoutube botga xush kelibsiz yuklab olish uchun  url yuboring :""",
+            parse_mode=ParseMode.HTML, reply_markup=ReplyKeyboardRemove())
         return 'bot'
+
+
+def handle_url(update, context):
+    print('url')
+    # Extract the URL from the message
+    url = update.message.text
+
+    # Handle the URL as needed
+    # Your logic here...
+
+    # Reply to the user
+    update.message.reply_text("URL handled successfully!")
+
+
+def download_video(url):
+    pass
+def handle_youtube_url(update, context):
+    url = update.message.text
+    print(url)
+
+    # Extract the YouTube video ID from the URL
 
 
 conv_handler = ConversationHandler(
     entry_points=[
         CommandHandler('start', start),
         CommandHandler('admin', start),
-        MessageHandler(Filters.regex('^GetMyID$'), start),
 
     ],
     states={
-
-        'adminpanel': list_admin,
         'bot': [
+            CommandHandler('admin', start),
+            MessageHandler(Filters.regex('^https://youtu'), handle_youtube_url),
+            MessageHandler(Filters.text & Filters.regex(r'https?://[^\s]+'), handle_url)
 
-            MessageHandler(Filters.text, start),
         ],
-
+        'adminpanel': list_admin,
     },
     fallbacks=[
-
-        MessageHandler(Filters.all, start),
+        CommandHandler('admin', start),
+        CommandHandler('start', start),
 
     ]
+
 )

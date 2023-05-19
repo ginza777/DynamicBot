@@ -50,6 +50,7 @@ CUSTOM_APPS = [
     "apps.getmyid",
     "apps.bots_config",
     "apps.tozalovchi",
+    "apps.youtubebot",
 
 
 ]

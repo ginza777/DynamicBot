@@ -1,3 +1,4 @@
 python manage.py runserver
 python manage.py getmyid
 python manage.py tozalovchi
+python manage.py  youtubebot
